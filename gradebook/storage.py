@@ -20,3 +20,8 @@ def load_data():
         "courses": {},
         "enrollments": []
     }
+def save_data(data):
+    """Saves all data to the JSON file"""
+    with open(F_PATH, "w") as file:
+        json.dump(data, file, indent=2)
+    
