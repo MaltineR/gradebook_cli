@@ -9,3 +9,16 @@ class student:
 
     def __str__(self):
         return f"Student(id={self.id}, name={self.name})"
+    
+""" This is a Course Class """
+
+class course :
+    def __init__(self, code, title) :
+        """ It takes Course Code and Course Title """
+        if not code or not title :
+            raise ValueError ("Code and title must be non-empty")
+        self.code=code
+        self.title=title
+    def __str__ (self):
+        return f"Course (code={self.code}, title={self.title})"
+
