@@ -49,3 +49,22 @@ class GradebookService:
     def list_enrollments(self):
         """List all enrollments by course code"""
         return sorted(self.data["Enrollments"], key=lambda x: x["course_code"])
+    
+    def compute_average(self, student_id, course_code):
+        """Calculate average grade for a student in a course"""
+        for enrollment in self.data["enrollments"]:
+            if enrollment["student_id"] == student_id and enrollment["course_code"] == course_code:
+                grades = enrollment["grades"]
+                if not grades:
+                    return 0
+                return sum(grades) / len(grades)
+
+    def compute_gpa(self, student_id):
+        """Calculate GPA for a student"""
+        averages = []
+        for enrollment in self.data["enrollments"]:
+            if enrollment["student_id"] == student_id:
+                averages.append(self.compute_average(student_id, enrollment["course_code"]))
+        if not averages:
+            return 0
+        return sum(averages) / len(averages)
