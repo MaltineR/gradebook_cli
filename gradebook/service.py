@@ -40,15 +40,15 @@ class GradebookService:
 
     def list_students(self):
         """List all students by name"""
-        return sorted(self.data["Students"].items(), key=lambda x: x[1]["name"])
+        return sorted(self.data["students"].items(), key=lambda x: x[1]["name"])
 
     def list_courses(self):
         """List all courses by title"""
-        return sorted(self.data["Courses"].items(), key=lambda x: x[1]["title"])
+        return sorted(self.data["courses"].items(), key=lambda x: x[1]["title"])
 
     def list_enrollments(self):
         """List all enrollments by course code"""
-        return sorted(self.data["Enrollments"], key=lambda x: x["course_code"])
+        return sorted(self.data["enrollments"], key=lambda x: x["course_code"])
     
     def compute_average(self, student_id, course_code):
         """Calculate average grade for a student in a course"""
