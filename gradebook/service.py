@@ -37,3 +37,15 @@ class GradebookService:
             if enrollment ["student_id"] == student_id and enrollment["course_code"] == course_code:
                 enrollment["grades"].append(grade)
                 self.save()
+
+    def list_students(self):
+        """List all students by name"""
+        return sorted(self.data["Students"].items(), key=lambda x: x[1]["name"])
+
+    def list_courses(self):
+        """List all courses by title"""
+        return sorted(self.data["Courses"].items(), key=lambda x: x[1]["title"])
+
+    def list_enrollments(self):
+        """List all enrollments by course code"""
+        return sorted(self.data["Enrollments"], key=lambda x: x["course_code"])
