@@ -5,6 +5,26 @@ from gradebook.service import (
     add_grade, list_students, list_courses,
     list_enrollments, compute_average, compute_gpa
 )
+def parse_grade(grade):
+    """ Validate grade value """
+    try:
+        grade = float(grade)
+    except ValueError:
+        raise ValueError("Grade must be a number")
+    if grade < 0 or grade > 100:
+        raise ValueError("Grade must be between 0 and 100")
+    return grade
+def parse_name(name):
+    """ Validate name value"""
+    if not name.strip():
+        raise ValueError("Name cannot be empty")
+    return name.strip()
+
+def parse_student_id(student_id):
+    """ Validate student ID"""
+    if student_id <= 0:
+        raise ValueError("Student ID must be a positive number")
+    return student_id
 
 
 def main():
