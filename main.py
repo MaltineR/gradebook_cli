@@ -28,6 +28,7 @@ def parse_student_id(student_id):
 
 
 def main():
+    """ Argparser commands to use for CLI """
     parser = argparse.ArgumentParser(description="Gradebook CLI")
     subparsers = parser.add_subparsers(dest="command")
 
@@ -49,7 +50,7 @@ def main():
     p4 = subparsers.add_parser("add-grade")
     p4.add_argument("--student-id", required=True, type=int)
     p4.add_argument("--course", required=True)
-    p4.add_argument("--grade", required=True, type=float)
+    p4.add_argument("--grade", required=True)
 
     
     p5 = subparsers.add_parser("list")
@@ -67,47 +68,77 @@ def main():
     args = parser.parse_args()
     data = load_data()
 
-    if args.command == "add-student":
-        data, new_id = add_student(data, args.name)
-        save_data(data)
-        print(f"Student added with ID: {new_id}")
+    try:
+        if args.command == "add-student":
+            name = parse_name(args.name)
+            data, new_id = add_student(data, name)
+            save_data(data)
+            print(f"Student added with ID: {new_id}")
 
-    elif args.command == "add-course":
-        data = add_course(data, args.code, args.title)
-        save_data(data)
-        print(f"Course '{args.title}' added")
+        elif args.command == "add-course":
+            if args.code in data["courses"]:
+                print(f"Course '{args.code}' already exists")
+            else:
+                data = add_course(data, args.code, args.title)
+                save_data(data)
+                print(f"Course '{args.title}' added")
+                
+        elif args.command == "enroll":
+            student_id = parse_student_id(args.student_id)
+            if str(student_id) not in data["students"]:
+                raise ValueError(f"Student ID {student_id} not found")
+            if args.course not in data["courses"]:
+                raise ValueError(f"Course '{args.course}' not found")
+            data = enroll(data, args.student_id, args.course)
+            save_data(data)
+            print(f"Student {args.student_id} enrolled in {args.course}!")
 
-    elif args.command == "enroll":
-        data = enroll(data, args.student_id, args.course)
-        save_data(data)
-        print(f"Student {args.student_id} enrolled in {args.course}!")
+        elif args.command == "add-grade":
+            student_id = parse_student_id(args.student_id)
+            grade = parse_grade(args.grade)
+            if str(student_id) not in data["students"]:
+                raise ValueError(f"Student ID {student_id} not found")
+            if args.course not in data["courses"]:
+                raise ValueError(f"Course '{args.course}' not found")
+            enrolled = any(
+                e for e in data["enrollments"]
+                if e["student_id"] == student_id and e["course_code"] == args.course
+            )
+            if not enrolled:
+                raise ValueError(f"Student {student_id} is not enrolled in {args.course}")
+            data = add_grade(data, args.student_id, args.course, grade) 
+            save_data(data)
+            print(f"Grade {args.grade} added")
 
-    elif args.command == "add-grade":
-        data = add_grade(data, args.student_id, args.course, args.grade)
-        save_data(data)
-        print(f"Grade {args.grade} added")
+        elif args.command == "list":
+            if args.type == "students":
+                for sid, s in list_students(data):
+                    print(f"ID: {sid} | Name: {s['name']}")
+            elif args.type == "courses":
+                for code, c in list_courses(data):
+                    print(f"Code: {code} | Title: {c['title']}")
+            elif args.type == "enrollments":
+                for e in list_enrollments(data):
+                    print(f"Student ID: {e['student_id']} | Course: {e['course_code']} | Grades: {e['grades']}")
 
-    elif args.command == "list":
-        if args.type == "students":
-            for sid, s in list_students(data):
-                print(f"ID: {sid} | Name: {s['name']}")
-        elif args.type == "courses":
-            for code, c in list_courses(data):
-                print(f"Code: {code} | Title: {c['title']}")
-        elif args.type == "enrollments":
-            for e in list_enrollments(data):
-                print(f"Student ID: {e['student_id']} | Course: {e['course_code']} | Grades: {e['grades']}")
+        elif args.command == "avg":
+            student_id = parse_student_id(args.student_id)
+            if str(student_id) not in data["students"]:
+                raise ValueError(f"Student ID {student_id} not found")
+            avg = compute_average(data, args.student_id, args.course)
+            print(f"Average grade: {avg:.2f}")
 
-    elif args.command == "avg":
-        avg = compute_average(data, args.student_id, args.course)
-        print(f"Average grade: {avg:.2f}")
+        elif args.command == "gpa":
+            student_id = parse_student_id(args.student_id)
+            if str(student_id) not in data["students"]:
+                raise ValueError(f"Student ID {student_id} not found")
+            gpa = compute_gpa(data, args.student_id)
+            print(f"GPA: {gpa:.2f}")
 
-    elif args.command == "gpa":
-        gpa = compute_gpa(data, args.student_id)
-        print(f"GPA: {gpa:.2f}")
-
-    else:
-        parser.print_help()
+        else:
+            parser.print_help()
+    except ValueError as e:
+        print(f"Value Error: {e}")
 
 
 if __name__ == "__main__":
