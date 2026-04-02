@@ -1,7 +1,7 @@
 import json
 import logging
 
-F_PATH = "fake/gradebook.json"
+F_PATH = "data/gradebook.json"
 
 
 logging.basicConfig(
