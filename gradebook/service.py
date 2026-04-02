@@ -29,20 +29,21 @@ def add_grade(data, student_id, course_code, grade):
     for e in data["enrollments"]:
         if e["student_id"] == student_id and e["course_code"] == course_code:
             e["grades"].append(grade)
+    return data
 
 
 def list_students(data):
-    """Return students sorted by name"""
+    """List students by name"""
     return sorted(data["students"].items(), key=lambda x: x[1]["name"])
 
 
 def list_courses(data):
-    """Return courses sorted by title"""
+    """List courses by title"""
     return sorted(data["courses"].items(), key=lambda x: x[1]["title"])
 
 
 def list_enrollments(data):
-    """Return enrollments sorted by course code."""
+    """List enrollments by course code."""
     return sorted(data["enrollments"], key=lambda x: x["course_code"])
 
 
