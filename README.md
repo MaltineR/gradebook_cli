@@ -53,7 +53,7 @@ python main.py gpa --student-id 1
 
 ### CLI Output
 
-![CLI](screenshots/cli.png)
+![CLI](screenshots/CLI.png)
 
 ### Logging Output
 ![Logging](screenshots/Loggins.png)
